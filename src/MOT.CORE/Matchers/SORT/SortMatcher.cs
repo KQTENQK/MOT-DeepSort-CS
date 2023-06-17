@@ -19,8 +19,8 @@ namespace MOT.CORE.Matchers.SORT
 
         private List<PoolObject<KalmanTracker<SortTrack>>> _trackers = new List<PoolObject<KalmanTracker<SortTrack>>>();
 
-        public SortMatcher(IPredictor predictor, float iouThreshold = 0.3f, int maxMisses = 50,
-            int minStreak = 1, int poolCapacity = 20)
+        public SortMatcher(IPredictor predictor, float iouThreshold = 0.3f, int maxMisses = 15,
+            int minStreak = 3, int poolCapacity = 50)
             : base(maxMisses, minStreak)
         {
             _predictor = predictor;
@@ -30,9 +30,9 @@ namespace MOT.CORE.Matchers.SORT
 
         public float IouThreshold { get; private init; }
 
-        public override IReadOnlyList<ITrack> Run(Bitmap frame, params DetectionObjectType[] detectionObjectTypes)
+        public override IReadOnlyList<ITrack> Run(Bitmap frame, float targetConfidence, params DetectionObjectType[] detectionObjectTypes)
         {
-            IReadOnlyList<IPrediction> detectedObjects = _predictor.Predict(frame, detectionObjectTypes);
+            IReadOnlyList<IPrediction> detectedObjects = _predictor.Predict(frame, targetConfidence, detectionObjectTypes);
 
             if (_trackers.Count == 0)
                 return Init(detectedObjects);

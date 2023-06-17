@@ -20,7 +20,7 @@ namespace MOT.CORE.Matchers.Abstract
         public int MaxMisses { get; protected init; }
         public int MinStreak { get; protected init; }
 
-        public virtual IReadOnlyList<ITrack> Run(Bitmap frame, params DetectionObjectType[] detectionObjectTypes)
+        public virtual IReadOnlyList<ITrack> Run(Bitmap frame, float targetConfidence, params DetectionObjectType[] detectionObjectTypes)
         {
             return new List<ITrack>();
         }

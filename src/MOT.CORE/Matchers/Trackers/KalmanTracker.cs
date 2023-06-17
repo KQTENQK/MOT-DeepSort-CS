@@ -39,6 +39,7 @@ namespace MOT.CORE.Matchers.Trackers
         public TTrack Track { get; set; }
         public int Misses { get; private set; }
         public int HitStreak { get; private set; }
+        public int LifeTime { get; private set; }
 
         public ITracker<TTrack> PinTrack(TTrack track)
         {
@@ -63,6 +64,7 @@ namespace MOT.CORE.Matchers.Trackers
             Misses = 0;
             HitStreak++;
             _filter.Update(ToMeasurement(boundingBox));
+            LifeTime++;
         }
 
         public RectangleF Predict()

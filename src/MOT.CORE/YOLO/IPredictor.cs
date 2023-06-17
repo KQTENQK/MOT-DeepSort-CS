@@ -5,6 +5,6 @@ namespace MOT.CORE.YOLO
 {
     public interface IPredictor
     {
-        public abstract IReadOnlyList<IPrediction> Predict(Bitmap image, params DetectionObjectType[] targetDetectionTypes);
+        public abstract IReadOnlyList<IPrediction> Predict(Bitmap image, float targetConfidence, params DetectionObjectType[] targetDetectionTypes);
     }
 }

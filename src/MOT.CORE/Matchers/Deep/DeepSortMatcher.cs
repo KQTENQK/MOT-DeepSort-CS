@@ -21,15 +21,19 @@ namespace MOT.CORE.Matchers.Deep
 
         private List<PoolObject<KalmanTracker<DeepSortTrack>>> _trackers = new List<PoolObject<KalmanTracker<DeepSortTrack>>>();
 
-        public DeepSortMatcher(IPredictor predictor, IAppearanceExtractor appearanceExtractor, float iouWeight = 0.225f,
-            float appearanceWeight = 0.775f, float threshold = 0.765f, int maxMisses = 50, 
-            int minStreak = 2, int poolCapacity = 20)
+        public DeepSortMatcher(IPredictor predictor, IAppearanceExtractor appearanceExtractor,
+            float appearanceWeight = 0.775f, float threshold = 0.765f, int maxMisses = 50,
+            int framesToAppearanceSmooth = 70, float smoothAppearanceWeight = 0.875f,
+            int minStreak = 5, int poolCapacity = 50)
             : base(maxMisses, minStreak)
         {
             _predictor = predictor;
             _appearanceExtractor = appearanceExtractor;
-            IouWeight = iouWeight;
+            IouWeight = 1 - appearanceWeight;
             AppearanceWeight = appearanceWeight;
+            SmoothIouWeight = 1 - smoothAppearanceWeight;
+            SmoothAppearanceWeight = smoothAppearanceWeight;
+            AssosiatedAppearancesCount = framesToAppearanceSmooth;
             Threshold = threshold;
             _pool = new Pool<KalmanTracker<DeepSortTrack>>(poolCapacity);
         }
@@ -37,10 +41,13 @@ namespace MOT.CORE.Matchers.Deep
         public float Threshold { get; private init; }
         public float IouWeight { get; private init; }
         public float AppearanceWeight { get; private init; }
+        public float SmoothIouWeight { get; private init; }
+        public float SmoothAppearanceWeight { get; private init; }
+        public int AssosiatedAppearancesCount { get; private init; }
 
-        public override IReadOnlyList<ITrack> Run(Bitmap frame, params DetectionObjectType[] detectionObjectTypes)
+        public override IReadOnlyList<ITrack> Run(Bitmap frame, float targetConfidence, params DetectionObjectType[] detectionObjectTypes)
         {
-            IPrediction[] detectedObjects = _predictor.Predict(frame, detectionObjectTypes).ToArray();
+            IPrediction[] detectedObjects = _predictor.Predict(frame, targetConfidence, detectionObjectTypes).ToArray();
             Vector[] appearances = _appearanceExtractor.Predict(frame, detectedObjects).ToArray();
 
             if (_trackers.Count == 0)
@@ -75,7 +82,7 @@ namespace MOT.CORE.Matchers.Deep
             PoolObject<KalmanTracker<DeepSortTrack>> tracker = _pool.Get();
             DeepSortTrack track = new DeepSortTrack(
                 new Track(detectedObjects[index].CurrentBoundingBox, detectedObjects[index].DetectionObjectType),
-                            appearances[index]);
+                            appearances[index], AssosiatedAppearancesCount);
 
             InitNewTrack(tracker.Object, track);
 
@@ -152,9 +159,9 @@ namespace MOT.CORE.Matchers.Deep
             {
                 for (int j = 0; j < appearances.Count; j++)
                 {
-                    appearancesMatrix[i, j] *= AppearanceWeight;
-                    appearancesMatrix[i, j] += IouWeight * Metrics.IntersectionOverUnionLoss(_trackers[i].Object.Track.PredictedBoundingBox, 
-                                                                                                detections[j].CurrentBoundingBox);
+                    appearancesMatrix[i, j] *= (_trackers[i].Object.LifeTime < AssosiatedAppearancesCount ? AppearanceWeight : SmoothAppearanceWeight);
+                    appearancesMatrix[i, j] += (_trackers[i].Object.LifeTime < AssosiatedAppearancesCount ? IouWeight : SmoothIouWeight) 
+                        * Metrics.IntersectionOverUnionLoss(_trackers[i].Object.Track.PredictedBoundingBox, detections[j].CurrentBoundingBox);
                 }
             }
 

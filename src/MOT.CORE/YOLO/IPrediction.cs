@@ -6,5 +6,6 @@ namespace MOT.CORE.YOLO
     {
         public DetectionObjectType DetectionObjectType { get; }
         public Rectangle CurrentBoundingBox { get; }
+        public float Confidence { get; }
     }
 }

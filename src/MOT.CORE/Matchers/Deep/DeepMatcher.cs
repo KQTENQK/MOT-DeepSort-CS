@@ -34,9 +34,9 @@ namespace MOT.CORE.Matchers.Deep
 
         public float AppearanceThreshold { get; private init; }
 
-        public override IReadOnlyList<ITrack> Run(Bitmap frame, params DetectionObjectType[] detectionObjectTypes)
+        public override IReadOnlyList<ITrack> Run(Bitmap frame, float targetConfidence, params DetectionObjectType[] detectionObjectTypes)
         {
-            IPrediction[] detectedObjects = _predictor.Predict(frame, detectionObjectTypes).ToArray();
+            IPrediction[] detectedObjects = _predictor.Predict(frame, targetConfidence, detectionObjectTypes).ToArray();
             Vector[] appearances = _appearanceExtractor.Predict(frame, detectedObjects).ToArray();
 
             if (_trackers.Count == 0)
@@ -71,7 +71,7 @@ namespace MOT.CORE.Matchers.Deep
             PoolObject<SimpleTracker<DeepTrack>> tracker = _pool.Get();
             DeepTrack track = new DeepTrack(
                 new Track(detectedObjects[index].CurrentBoundingBox, detectedObjects[index].DetectionObjectType),
-                            appearances[index]);
+                            appearances[index], 0);
 
             InitNewTrack(tracker.Object, track);
 
@@ -104,7 +104,7 @@ namespace MOT.CORE.Matchers.Deep
             {
                 for (int j = 0; j < appearances.Count; j++)
                 {
-                    float metric = Metrics.CosineDistance(_trackers[i].Object.Track.Appearance, appearances[j]);
+                    float metric = Metrics.CosineDistance(_trackers[i].Object.Track.MedianAppearance, appearances[j]);
 
                     if (metric < float.Epsilon)
                         metric = 0;

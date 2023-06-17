@@ -31,7 +31,7 @@ namespace MOT.CORE.YOLO
                 sessionOptions ?? new SessionOptions());
         }
 
-        public IReadOnlyList<IPrediction> Predict(Bitmap image, params DetectionObjectType[] targetDetectionTypes)
+        public IReadOnlyList<IPrediction> Predict(Bitmap image, float targetConfidence, params DetectionObjectType[] targetDetectionTypes)
         {
             Bitmap resized = image;
 
@@ -46,7 +46,8 @@ namespace MOT.CORE.YOLO
             };
 
             IDisposableReadOnlyCollection<DisposableNamedOnnxValue> onnxOutput = _inferenceSession.Run(inputs, _yoloModel.Outputs);
-            List<YoloPrediction> predictions = Suppress(ParseOutput(onnxOutput.First().Value as DenseTensor<float>, image, targetDetectionTypes));
+            List<YoloPrediction> predictions = Suppress(ParseOutput(onnxOutput.First().Value as DenseTensor<float>,
+                                                        targetConfidence, image, targetDetectionTypes));
 
             onnxOutput.Dispose();
 
@@ -58,7 +59,7 @@ namespace MOT.CORE.YOLO
             _inferenceSession.Dispose();
         }
 
-        private YoloPrediction[] ParseOutput(DenseTensor<float> output, Image image, params DetectionObjectType[] targetDetectionTypes)
+        private YoloPrediction[] ParseOutput(DenseTensor<float> output, float targetConfidence, Image image, params DetectionObjectType[] targetDetectionTypes)
         {
             unsafe
             {
@@ -82,7 +83,9 @@ namespace MOT.CORE.YOLO
                         spanOutput[i * _yoloModel.Dimensions + j] *= spanOutput[i * _yoloModel.Dimensions + 4];
                         DetectionObjectType objectType = (DetectionObjectType)(j);
 
-                        if (targetDetectionTypes.Length != 0 && !targetDetectionTypes.Any(p => p == objectType))
+                        if ((targetDetectionTypes.Length != 0 
+                            && !targetDetectionTypes.Any(p => p == objectType))
+                            || spanOutput[iOffset + j] < targetConfidence)
                             continue;
 
                         if (spanOutput[i * _yoloModel.Dimensions + j] <= _yoloModel.MulConfidence)
