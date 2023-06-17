@@ -5,19 +5,19 @@ Multiple object tracking
 This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network as person predictor and OSNet as appearance extractor in the frame.
 
 ## Examples
-SoRT example
+<h3>SoRT example</h3>
 <div align="center">
 <img src="./GitAssets/sort.gif" width=640/>
-
+</br>
 </div>
-DeepSoRT example
+<h3>DeepSoRT example</h3>
 <div align="center">
 <img src="./GitAssets/deepsort.gif" width=640/>
+</br>
 </div>
-<div align="center">
 
 ## Code example of using
-<h2>Used file hierarchy:</h2>
+<h3>Used file hierarchy:</h3>
 </br>
 .
 └ Assets
@@ -36,7 +36,7 @@ DeepSoRT example
 
 </br>
 
-<h2>Initializing predictor and extractor</h2>
+<h3>Initializing predictor and extractor</h3>
 
 ```cs
 var predictor = new YoloScorer<Yolo640v5>(File.ReadAllBytes("../../../Assets/Models/Yolo/yolo640v5.onnx"));
@@ -46,18 +46,20 @@ var appearanceExtractor = new ReidScorer<OSNet_x1_0>(File.ReadAllBytes("../../..
     extractorsInMemoryCount);
 ```
 
-<h2>Initializing SoRT matcher</h2>
+<h3 align="left">Initializing SoRT matcher</h3>
+
 ```cs
 var matcher = new SortMatcher(predictor);
 ```
 
-<h2>Initializing DeepSoRT matcher</h2>
+<h3 align="left">Initializing DeepSoRT matcher</h3>
+
 ```cs
 var matcher = new DeepSortMatcher(predictor, appearanceExtractor);
 ```
 
 </br>
-<h2>Drawing people bounding boxed in the frame.</h2>
+<h3 align="left">Drawing people bounding boxed in the frame.</h3>
 
 ```cs
 private static void DrawTracks(Bitmap frame, IReadOnlyList<ITrack> tracks)
