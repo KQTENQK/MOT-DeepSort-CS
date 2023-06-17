@@ -19,7 +19,8 @@ This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network a
 ## Code example of using
 <h3>Used file hierarchy:</h3>
 </br>
-.
+<pre>
+. 
 └ Assets
     ├ Input
     │   └ test.mp4
@@ -29,7 +30,7 @@ This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network a
         │   └ yolo640v5.onnx
         └ Reid
             └ osnet_x1_0_msmt17.onnx
-
+</pre>
 </br>
 
 <i>Some .onnx models are in src/MOT/ directory.</i>
@@ -77,13 +78,17 @@ private static void DrawTracks(Bitmap frame, IReadOnlyList<ITrack> tracks)
             new[] { track.CurrentBoundingBox });
 
         graphics.FillRectangle(new SolidBrush(track.Color),
-            new RectangleF(track.CurrentBoundingBox.X - (penSize / 2), track.CurrentBoundingBox.Y - yBoundingBoxIntent,
-                track.CurrentBoundingBox.Width + penSize, yBoundingBoxIntent - (penSize / 2)));
+            new RectangleF(track.CurrentBoundingBox.X - (penSize / 2), 
+                track.CurrentBoundingBox.Y - yBoundingBoxIntent,
+                track.CurrentBoundingBox.Width + penSize, 
+                yBoundingBoxIntent - (penSize / 2)));
 
-        (float x, float y) = (track.CurrentBoundingBox.X - xNumberIntent, track.CurrentBoundingBox.Y - yBoundingBoxIntent);
+        (float x, float y) = (track.CurrentBoundingBox.X - xNumberIntent, 
+                            track.CurrentBoundingBox.Y - yBoundingBoxIntent);
 
         graphics.DrawString($"{track.Id}",
-            new Font("Consolas", fontSize, GraphicsUnit.Pixel), new SolidBrush(Color.FromArgb((0xFF << 24) | 0xDDDDDD)),
+            new Font("Consolas", fontSize, GraphicsUnit.Pixel), 
+            new SolidBrush(Color.FromArgb((0xFF << 24) | 0xDDDDDD)),
             new PointF(x, y));
     }
 
@@ -100,7 +105,8 @@ double targetFps = videoCapture.Get(Emgu.CV.CvEnum.CapProp.Fps);
 int width = videoCapture.Width;
 int height = videoCapture.Height;
 
-VideoWriter videoWriter = new VideoWriter("../../../Assets/Output/test.mp4", -1, targetFps, new Size(width, height), true);
+VideoWriter videoWriter = new VideoWriter("../../../Assets/Output/test.mp4", -1, 
+                                    targetFps, new Size(width, height), true);
 
 var predictor = new YoloScorer<Yolo640v5>(File.ReadAllBytes("../../../Assets/Models/Yolo/yolo640v5.onnx"));
 
