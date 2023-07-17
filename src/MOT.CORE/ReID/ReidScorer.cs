@@ -123,7 +123,7 @@ namespace MOT.CORE.ReID
                     {
                         Bitmap bitmap = FragmentBitmap(image, detectedBoundingBoxes[i * _reidModel.BatchSize + j].CurrentBoundingBox, _reidModel.Width, _reidModel.Height);
                         Rectangle rectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
-                        BitmapData bitmapData = image.LockBits(rectangle, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                        BitmapData bitmapData = bitmap.LockBits(rectangle, ImageLockMode.ReadOnly, bitmap.PixelFormat);
                         int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
 
                         Span<float> rTensorSpan = subImagesData[i].Buffer.Span.Slice(_reidModel.Channels * _reidModel.Height * _reidModel.Width * j,
@@ -152,7 +152,7 @@ namespace MOT.CORE.ReID
                             }
                         }
 
-                        image.UnlockBits(bitmapData);
+                        bitmap.UnlockBits(bitmapData);
                     }
                 }
             }

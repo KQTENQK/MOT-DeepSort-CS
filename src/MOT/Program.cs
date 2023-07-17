@@ -28,6 +28,7 @@ namespace MOT
             var appearanceExtractor = new ReidScorer<OSNet_x1_0>(File.ReadAllBytes("../../../Assets/Models/Reid/osnet_x1_0_msmt17.onnx"), 3);
 
             var matcher = new DeepSortMatcher(predictor, appearanceExtractor);
+            float targetConfidence = 0.4f;
 
             Mat readBuffer = new Mat();
             videoCapture.Read(readBuffer);
@@ -36,7 +37,7 @@ namespace MOT
             {
                 Bitmap frame = readBuffer.ToBitmap();
 
-                IReadOnlyList<ITrack> tracks = matcher.Run(frame, DetectionObjectType.Person);
+                IReadOnlyList<ITrack> tracks = matcher.Run(frame, targetConfidence, DetectionObjectType.Person);
 
                 DrawTracks(frame, tracks);
 
