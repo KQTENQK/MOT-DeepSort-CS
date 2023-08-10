@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MOT.CORE.ReID
 {
-    public class ReidScorer<TReidModel> : IDisposable, IAppearanceExtractor where TReidModel : IReidModel
+    public class ReidScorer<TReidModel> : IAppearanceExtractor where TReidModel : IReidModel
     {
         private readonly IReidModel _reidModel;
         private readonly List<InferenceSession> _inferenceSessions;

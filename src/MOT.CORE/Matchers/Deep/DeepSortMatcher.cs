@@ -22,9 +22,9 @@ namespace MOT.CORE.Matchers.Deep
         private List<PoolObject<KalmanTracker<DeepSortTrack>>> _trackers = new List<PoolObject<KalmanTracker<DeepSortTrack>>>();
 
         public DeepSortMatcher(IPredictor predictor, IAppearanceExtractor appearanceExtractor,
-            float appearanceWeight = 0.775f, float threshold = 0.765f, int maxMisses = 50,
-            int framesToAppearanceSmooth = 70, float smoothAppearanceWeight = 0.875f,
-            int minStreak = 5, int poolCapacity = 50)
+            float appearanceWeight = 0.775f, float threshold = 0.5f, int maxMisses = 50,
+            int framesToAppearanceSmooth = 40, float smoothAppearanceWeight = 0.875f,
+            int minStreak = 8, int poolCapacity = 50)
             : base(maxMisses, minStreak)
         {
             _predictor = predictor;
@@ -66,6 +66,12 @@ namespace MOT.CORE.Matchers.Deep
             RemoveOutdatedTracks<KalmanTracker<DeepSortTrack>, DeepSortTrack>(ref _trackers);
 
             return tracks;
+        }
+
+        public override void Dispose()
+        {
+            _predictor.Dispose();
+            _appearanceExtractor.Dispose();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

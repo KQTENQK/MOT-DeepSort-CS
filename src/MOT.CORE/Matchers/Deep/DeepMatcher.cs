@@ -57,6 +57,12 @@ namespace MOT.CORE.Matchers.Deep
             return tracks;
         }
 
+        public override void Dispose()
+        {
+            _predictor.Dispose();
+            _appearanceExtractor.Dispose();
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private List<DeepTrack> Init(IReadOnlyList<IPrediction> detectedObjects, IReadOnlyList<Vector> appearances)
         {

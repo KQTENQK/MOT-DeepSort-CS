@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MOT.CORE.YOLO
 {
-    public class YoloScorer<TYoloModel> : IDisposable, IPredictor where TYoloModel : IYoloModel
+    public class YoloScorer<TYoloModel> : IPredictor where TYoloModel : IYoloModel
     {
         private readonly InferenceSession _inferenceSession;
         private readonly TYoloModel _yoloModel;

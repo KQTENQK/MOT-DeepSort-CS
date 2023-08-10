@@ -52,6 +52,11 @@ namespace MOT.CORE.Matchers.SORT
             return tracks;
         }
 
+        public override void Dispose()
+        {
+            _predictor.Dispose();
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private List<SortTrack> Init(IReadOnlyList<IPrediction> detectedObjects)
         {

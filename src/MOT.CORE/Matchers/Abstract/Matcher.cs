@@ -1,5 +1,6 @@
 ﻿using MOT.CORE.Utils.Pool;
 using MOT.CORE.YOLO;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace MOT.CORE.Matchers.Abstract
 {
-    public abstract class Matcher
+    public abstract class Matcher : IDisposable
     {
         private int _startTrackerIndex = 1;
 
@@ -66,5 +67,7 @@ namespace MOT.CORE.Matchers.Abstract
             if (_startTrackerIndex == int.MaxValue)
                 _startTrackerIndex = 1;
         }
+
+        public abstract void Dispose();
     }
 }
