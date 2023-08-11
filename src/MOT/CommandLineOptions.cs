@@ -49,7 +49,7 @@ namespace MOT
         [Option("acount", HelpText = "Defines appearance extractors in memory count.", Required = false)]
         public int? ExtractorsInMemoryCount { get; set; }
 
-        [Option('a', "conf", HelpText = "Defines target people detection confidence([0-1]).", Required = false)]
+        [Option('c', "conf", HelpText = "Defines target people detection confidence([0-1]).", Required = false)]
         public float? TargetConfidence { get; set; }
     }
 
