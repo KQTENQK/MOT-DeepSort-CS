@@ -1,22 +1,74 @@
-<h1>Multiple object tracking</h1>
+# Multiple object tracking
 
 This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network as person predictor and OSNet as appearance extractor in the frame.
 
 ## Examples
-<h3><b>SoRT example</b></h3>
+### <b>SoRT example</b>
 </br>
 <div align="center">
 <img src="./GitAssets/sort.gif" width=640/>
 </br>
 </div>
-<h3><b>DeepSoRT example</b></h3>
+
+### <b>DeepSoRT example</b>
 </br>
 <div align="center">
 <img src="./GitAssets/deepsort.gif" width=640/>
 </br>
 </div>
 
-## Code example of using
+## Console app usage (windows)
+### Command line options
+```
+  -s, --source        Required. Source video file path.
+
+  -t, --target        Required. Target video file path.
+
+  -d, --detector      Required. Detector net file path.
+
+  -m, --matcher       Required. Matcher type:
+                       0 for DeepSort
+                       1 for Sort
+                       2 for Deep
+
+  -y, --yver          Required. Yolo model:
+                       0 for 1280 resolution
+                       1 for 640 resolution
+
+  -v, --aver          Appearance model:
+                       0 for OSNet
+                       1 Fast-Reid
+
+  -a, --appearance    Appearance extractor net file path.
+
+  --fps               Target video fps.
+
+  --threshold         Defines treshold for matcher.
+
+  --aweight           Defines appearance weight for deepsort matcher.
+
+  --asmooth           Defines appearance smooth weight for deepsort matcher.
+
+  --streak            Defines min streak to reidentify person.
+
+  --misses            Defines max misses to lose indentification.
+
+  --fsmooth           Defines passed frames for smooth weight to be applied.
+
+  --acount            Defines appearance extractors in memory count.
+
+  -a, --conf          Defines target people detection confidence([0-1]).
+
+  --help              Display this help screen.
+
+  --version           Display version information.
+```
+
+### Example of using
+```
+mot_x64 -s source.mp4 -t target.mp4 -d yolo640v5.onnx -y 1 -m 0 -a osnet.onnx -v 0 -c .4
+```
+## MOT.CORE usage
 <h3>Used file hierarchy:</h3>
 </br>
 <pre>
@@ -35,7 +87,7 @@ This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network a
 
 <i>Some .onnx models are in src/MOT/ directory.</i>
 
-<h3>Initializing predictor and extractor</h3>
+### Initializing predictor and extractor
 
 ```cs
 string yoloPath = "../../../Assets/Models/Yolo/yolo640v5.onnx";
@@ -138,7 +190,6 @@ while (readBuffer.IsEmpty == false)
     videoCapture.Read(readBuffer);
 }
 
-predictor.Dispose();
-appearanceExtractor.Dispose();
+matcher.Dispose();
 videoWriter.Dispose();
 ```
