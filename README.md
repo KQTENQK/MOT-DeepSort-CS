@@ -57,7 +57,7 @@ This is the C# implementation of SoRT and DeepSoRT trackers using YOLO network a
 
   --acount            Defines appearance extractors in memory count.
 
-  -a, --conf          Defines target people detection confidence([0-1]).
+  -c, --conf          Defines target people detection confidence([0-1]).
 
   --help              Display this help screen.
 
