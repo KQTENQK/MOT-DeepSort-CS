@@ -43,6 +43,9 @@ namespace MOT.CORE.ReID
 
         public IReadOnlyList<Vector> Predict(Bitmap image, IPrediction[] detectedBounds)
         {
+            if (detectedBounds.Length == 0)
+                return new List<Vector>();
+            
             int batchCount = detectedBounds.Length / _reidModel.BatchSize;
             batchCount = detectedBounds.Length % _reidModel.BatchSize == 0 ? batchCount : batchCount + 1;
 
